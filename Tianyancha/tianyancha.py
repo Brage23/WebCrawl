@@ -18,11 +18,16 @@ class tianyancha:
         #firefox_options = Options()
         options = webdriver.ChromeOptions()
         if debug is False:
+            self.k = 1 #浏览器缩放比例，请根据实际情况调整
             options.add_argument('--headless')
+            options.add_argument("--window-size=1960,1080")
+        else:
+            self.k = 1.25 #浏览器缩放比例，请根据实际情况调整
+            self.browser.maximize_window()
         options.add_argument('--disable-gpu')
-        #self.browser = webdriver.Firefox(executable_path=driver_path,firefox_options=options)
+        options.add_argument('user-agent="Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"')
         self.browser = webdriver.Chrome(executable_path=driver_path, options=options)
-        self.browser.maximize_window()
+        #
     
     #登录
     def login(self,username,password):
@@ -61,7 +66,7 @@ class tianyancha:
             print('4 - wait captcha failed',e)
             return False
 
-        k = 1.25 #浏览器缩放比例，请根据实际情况调整
+        k = self.k
 
         #5. 截取完整的滑块验证码图片
         try:
@@ -236,8 +241,8 @@ class tianyancha:
             name = bs.find(name='div',attrs={"class":"name"})
             info['owner'] = name.text
             return info
+            
         # list:企业信息以列表形式展示
-
         if bs.find_all("div",class_="search-item sv-search-company") is not None:
             max_item = None
             max_diff = 0
@@ -281,18 +286,18 @@ if __name__ == "__main__":
     driver_path = "your driver path"
     username = 'your tianyancha username'
     password = 'your tianyancha password'
-    tyc = tianyancha(driver_path,debug = True)
+    tyc = tianyancha(driver_path)
     sleep(5)
     while tyc.login(username,password) is False:
         sleep(1)
     sleep(5)
-    info = tyc.get_company_info("南昌梅西商贸有限公司")
+    info = tyc.get_company_info("北京百度网讯科技有限公司")
     print(info)
     sleep(5)
-    info = tyc.get_company_info("南通回力橡胶有限公司")
+    info = tyc.get_company_info("深圳市腾讯计算机系统有限公司")
     print(info)
     sleep(5)
-    info = tyc.get_company_info("福州安鸿贸易有限公司")
+    info = tyc.get_company_info("阿里巴巴（中国）有限公司")
     print(info)
 
     
